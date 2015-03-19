@@ -1,0 +1,60 @@
+
+
+
+
+
+
+				DAT205 - PYTHON
+			       ASSIGNMENT BRIEF
+
+				      by
+
+				 Dr Simon Lock
+
+~
+INTRODUCTION
+
+ Rather than working through the entire term's practical exercises
+                                AND THEN
+           starting a whole new separate assessed exercise
+
+
+ It would be a whole lot more straightforward to...
+
+           Just use the practical exercises AS the assignment !!!
+
+
+ This will have the following advantages:
+
+>  o  No extra block of work at the end of the module
+
+>  o  No conflict with other module deadlines at the end of the term
+
+>  o  Encourage people to turn up to practical sessions throughout the term
+
+~
+SUBMISSION
+
+ All your code must be pushed up onto github
+
+ You should create a separate folder for each week's practical work
+
+ You should submit the URL to your github repository on the Moodle portal
+
+ Your repository will be cloned shortly after the deadline
+
+ Your mark will be based on the code that was found in your repo at that time
+
+~
+MARKING CRITERIA
+
+ You will be marked according to the following criteria:
+
+   o  Technical and functional achievement
+
+   o  Appropriate use of languages constructs
+
+   o  Conceptual elegance of your solutions
+
+   o  Clean, tidy and well documented code
+

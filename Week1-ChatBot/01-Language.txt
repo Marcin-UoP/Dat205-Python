@@ -1,0 +1,438 @@
+
+
+
+
+
+
+				DAT205 - PYTHON
+				Language Basics
+
+				      by
+
+				 Dr Simon Lock
+
+~
+INTRODUCTION
+
+  o  In these lectures, we will be introducing the Python programming language
+
+  o  We will focus on <B>Python 2.7</B> as it is (allegedly) more compatible than 3.4
+
+  o  Python is a very useful language that is used in:
+
+	-  Unity 3D
+
+	-  Raspberry PI
+
+	-  Web technologies (such as Django, Zope and Plone)
+
+  o  It is also becoming very popular as a "first language" in schools
+
+  o  Very programmer friendly and versatile language
+
+  o  Used to create this presentation viewer !
+
+&	print("Hello World")
+
+~
+GENERAL LANGUAGE NOTES
+
+  o  Python is an interpreted language that can be run:
+
+	-  As a script written in a text file
+
+	-  Interactively by typing directly into the interpreter
+%           /usr/bin/python
+
+	-  As scriptlets within another language or application
+
+  o  Because it is not compiled, mistakes are often missed and errors
+     frequently occur at run-time
+
+  o  There are no curly brackets { } or semi-colons ;
+
+  o  Colons : and indentation are however <U>very</U> important
+
+  o  Comment character is a hash #
+
+~
+VARIABLE DATA TYPES
+
+  o  No need to declare the type of local variables, just start to use them
+
+	name = "bob"
+	
+  o  If global, state they are global in each function they're used in
+
+	global moneyInWallet
+
+  o  Primitive data types available include
+
+	str bool int float long
+
+  o  There are also some more complex data types
+
+	list set dict
+
+  o  We'll talk more about these later !
+
+~
+CONTROL CONSTRUCTS
+
+  o  Comparison operators are similar to many other languages
+
+	== < > >= <= != not or and
+
+  o  These can be used in "if" statements:
+&	age = 22
+&	money = 100
+&	if(age > 18):
+&		print("Fancy a pint ?")
+&		money = money - 10
+&	elif(age > 5): print("Lemonade I'm afraid !")
+
+  o  <R>[Q&A]</R> What interesting things do you notice about the above ?
+<?>
+>	-  No semi colons at the end of lines
+>	-  A single colon replaces curly brackets
+>	-  Indentation indicates what goes inside each branch
+>	-  "elif" is a shorthand for "else if"
+>	-  A single statement inside an "if" branch needs no identation
+>	-  Use "print" instead of "println" </?>
+~
+LOOPS
+
+  o  As usual, there is a "while" loop
+
+&	counter = 0
+&	while(counter<4):
+&		print(counter)
+&		counter+=1
+&	
+  o  Note: there is no counter++ operation !
+
+  o  There is a very powerful "for" loop
+
+&	students = ["chris","harry","viv"]
+&	for person in students:	print(person)
+&
+  o  Although it's still possible to do this in a more "classic" way
+
+&	for i in range(0,len(students)):
+&		print(students[i])
+
+~
+STRING MANIPULATION
+
+  o  Glueing strings together is done with + as usual
+
+&	name = "Dave"
+&	print("Hello there " + name + " how are you ?")
+
+  o  But we can also do multiplication as well !
+
+&	print("I said n" + "o"*10)
+
+  o  <R>[Q&A]</R> In what situations might we find string multiplication useful ?
+>
+>	-  Padding numbers e.g. 0008, 0009, 0010, 0111
+
+>	-  Creating tables:
+>		Name    Age   Percentage Mark  Overall Grade
+>		Vic     22	   68		   2.1
+>		Bob     21	   88		   1st
+>		George  23	   58		   2.2
+
+~
+STRING SLICING
+
+  o  We can slice up strings using array notation
+
+  o  What do you think the code below will print out ?
+
+&	message = "hello"
+&	print(message[1])
+&	print("This is " + message[0:4])
+&	print("Makes me feel pretty " + message[3:5])
+
+  o  To make things easier, we can omit beginning and end indexes
+
+	print("This is " + message[:4])
+	print("Makes me feel pretty " + message[3:])
+
+  o  We can reference from end of string (RHS) using negative index values !
+
+  o  <R>[Q&A]</R> How would we do the last print above using negative indexes ?
+
+>	<?>print("Makes me feel pretty " + message[-2:])</?>
+
+~
+COMPOUND DATA STRUCTURES
+
+    Arrays do exist, but are heavyweight, so the following are preferred:
+
+	o  list
+		[ 12, 15, 17 ]
+		Works pretty much like an array (only lighter weight)
+		Once set up, this can be changed (extended and values altered)
+
+	o  set
+		( [12, 15, 17] )
+		Unique, unordered, not indexed, much more efficient than lists
+ 		Supports maths operations: intersection, union, difference etc
+
+	o  tuple
+		( 12345, 54321, "hello" )
+		Can contain a mixture of types
+		Once set up, CANNOT be changed
+
+	o  dictionary
+		{ "jack": 25, "jill": 27 }
+		Name/Value pairs, indexed by name
+
+~
+LISTS IN MORE DETAIL
+
+  o  List are the most commonly used, so let's look at them in more detail
+
+  o  Used to store various (consistent) types of data (int, string, float)
+
+  o  They behave very much like strings and support the following:
+
+	-  Slicing [7] [2:5] [:15] [10:]
+
+	-  The "in" keyword
+
+&		months = ["jan","feb","mar","apr","may"]
+&		if "apr" in months: print("Found April !")
+
+	-  Increase size using "append" to add element at the end
+
+		months.append("jun")
+
+	-  Increase size using "insert" to add an element somewhere in middle
+
+		months.insert(2,"spam")
+
+~
+<R>QUESTION</R>
+
+    What values would <B>months</B> hold after the following code is run ?
+
+&	months = ["jan","feb","mar","apr","may"]
+&	months.insert(2,"spam")
+&	print(months)
+
+~
+REMOVING FROM A LIST
+
+  o  As well as adding to a list, we can also remove elements from it
+
+  o  The "del" operation allows us to remove one or more elements
+
+&		months = ["jan","feb","mar","apr","may"]
+&		del months[3]
+&		if "apr" in months: print("Found April !")
+&		else: print("Can't find April !")
+&
+  o  We can also delete entire slices
+
+&		del months[1:3]
+&		print(months)
+
+~
+FUNCTIONS
+
+  o  Functions are defined using the "def" keyword
+
+  o  You can choose any name to give them
+
+  o  They can take any number of parameters (no need to give the type)
+
+  o  They can return a value if you wish (again, no type required)
+
+  o  For example, below is a simple function:
+
+&	def myFunction(firstNum, secondNum):
+&		answer = firstNum * secondNum
+&		return answer
+
+~
+<R>QUESTION</R>
+
+    What is wrong with this code ?
+
+&	result = myFunction(10,2)
+&	print(result)
+&
+&	def myFunction(firstNum, secondNum):
+&		answer = firstNum * secondNum
+&		return answer
+
+>    <?>You have to define a function BEFORE you call it !</?>
+
+~
+NAMED PARAMETERS
+
+  o  Sometimes a function can have a lot of parameters
+
+  o  It can be a pain to have to pass them all in when you call a function
+
+  o  Python allows us to do <B>named parameter passing</B>:
+
+	login(user="bob", pass="secret")
+
+  o  This allows us to pass any number of parameters, in any order !
+
+  o  Function takes what it needs and uses default values for anything missing
+
+  o  A bit different from stuff you have seem before ?
+
+~
+MODULES
+
+  o  There are lots of existing libraries for you to use
+
+  o  Some will come pre-installed, other will need installing
+
+  o  To use them, you can import entire libraries
+
+&	import os, sys, time
+
+  o  Or just specific objects or functions
+
+&	from time import sleep
+
+  o  You can then call functions from these libraries
+
+&	sleep(3)
+
+  o  You can also use a shorthand alias to make things quicker
+
+	import FacebookPythonLibrary as fb
+	fb.updateStatus("Coding Python")
+
+~
+INSTALLING MODULES
+
+  o  There are a number of different ways to install modules
+     (but none are as good as when using node.js package installer ;o)
+
+	-  Custom installer applications (double-click)
+
+	-  An OS package manager (<B>apt-get</B> on the Raspberry Pi):
+
+		apt-get install python-pygame
+
+	-  The <B>easy_install</B> command line application:
+
+		easy_install python-twitter
+
+	- The <B>pip</B> command line python package manager:
+
+		pip install python-facebook
+
+~
+USER INPUT
+
+  o  Input from the user can come from a variety of sources:
+
+	-  Parameters in the sys.argv list (like args[] array in Java)
+
+	-  From interactive input via the terminal:
+
+&		response = raw_input("What is your name ? ")
+&		print("Hello " + response)
+
+	-  Mouse (when using graphical user interface)
+
+	-  From custom hardware (e.g. Arduino, PiFace, Gertboard etc)
+
+~
+<R>EXERCISE</R>
+
+    This Java code adds up even numbers from 0 to 99, convert it into Python:
+
+	public static void main(String args[])
+	{
+    	    int total = 0;
+    	    for(int i=0; i<100; i++) {
+                if(isEven(i)) total = total + i;
+    	    }
+	    System.out.println(total);
+	}
+
+	public static boolean isEven(int num)
+	{
+	    if(num%2 == 0) return true;
+	    else return false;
+	}
+
+~
+SOLUTION
+<?>
+>    Function definition has to come first - before we can call it !
+&	def isEven(num):
+
+>    Note capital T for "True" and F for "False" and also the use of colons
+&	    if(num%2 == 0): return True
+&	    else: return False
+&
+>    No need for a main method, just stick the code in the file
+&	total = 0
+&
+>    Very different "for" loop in Python !
+&	for i in range(0,100):
+
+>    Don't forget the colon !
+&	    if(isEven(i)): total = total + i
+&
+>    Short version of print
+&	print(total)
+
+>    No semi colons, no curly brackets ! </?>
+~
+SUMMARY
+
+  o  This week we have covered a brief introduction to Python
+
+  o  Once done, we can then explore more interesting features of the language
+
+  o  This will involve various useful Python libraries
+
+  o  As well as the features of the Raspberry Pi made available by Python
+
+
+~
+PRACTICALS AND ASSESSMENT
+
+  o  As with previous segments of this module, there is a practical each week
+
+  o  In these you'll develop your skills in using Python
+
+  o  The assignment will be a portfolio of all weeks exercises
+
+  o  Be sure to do the work each week - you'll be assessed on it at the end !
+
+
+~
+THIS WEEK'S PRACTICAL
+
+    In this week's practical you will create an interactive chatbot.
+    This should engage the user in interesting and intelligent conversation.
+    The bot should be able to ask and answer questions.
+    Try to make it as realistic and life-like as possible.
+
+    Don't use any existing natural language processing libraries.
+    It's more important to try out the features of Python to create your bot.
+
+    Not all of the information you require is in this lecture !
+    You will have to use your initiative (and a search engine ;o)
+
+    There are a number of string functions that will be useful
+         (raw_input, find, replace, split, upper, lower)
+
+    You might like to use this list of "stop words" to help in your task:
+
+%        http://www.ranks.nl/stopwords
+

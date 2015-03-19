@@ -1,0 +1,411 @@
+
+
+
+
+
+
+				DAT205 - PYTHON
+			         Communication
+
+				      by
+
+				 Dr Simon Lock
+
+~
+OVERVIEW
+
+    In this lecture we are going to take a look at low-level communication:
+
+	o  USB Serial
+
+	o  Protocols
+
+	o  HTTP
+
+	o  MQTT
+
+~
+PYSERIAL LIBRARY
+
+    PySerial allows serial communication for a number of purposes:
+
+  	o  Communication between Raspberry PIs
+
+  	o  Data input from sensor devices
+
+  	o  Of most interest to us however is comms with Arduino boards
+~
+SERIAL COMMS
+
+    Import required libraries
+&	import serial
+&
+    Open port by name (different for each device) comms rate and timeout
+&	port = serial.Serial("/dev/cu.usbmodem1421",9600,timeout=2) 
+&
+    Read in a line of input from the serial port
+&	input = port.readline()
+
+    Print out what we just read
+&	print(input)
+&
+    Write out a string to the serial port
+&	port.write("Hello")
+&
+    Close the port cleanly
+&	port.close()
+
+~
+INSTALLING SERIAL LIB
+
+  The Python Serial libraries are already installed on the Rasp Pi
+
+  If you are on another platform and have pip, you can install with:
+
+	pip install pyserial
+
+  Otherwise, you can manually get the library from:
+
+%	https://pypi.python.org/pypi/pyserial
+
+  Download the "source" version, unzip it, cd into the folder and run:
+
+	python setup.py install --user
+
+  This will install the necessary libraries and drivers for you
+
+~
+INVENTING SIMPLE SERIAL PROTOCOLS
+
+  o  You might have used Firmata in the past for communicating with Arudino
+
+  o  There is a Python client for Firmata, but we won't be using that :op
+
+  o  It's not always reliable, plus we learn more by working at a lower level
+
+  o  In this module we will be creating our own simple protocols for comms
+
+~
+<R>SIMPLE PROTOCOL EXERCISE</R>
+
+  o  Imagine we had an Arduino board with a button and a light sensor attached
+
+  o  How can the Arduino inform your computer what the current readings are ?
+
+>  o  We can create a simple reporting protocol:
+
+>	- If the button is pressed, the Arduino sends a "B"
+
+>	- If the light level changes, the Arduino sends a number (e.g. 7)
+
+>  o  The Arduino is constantly sensing, but only sends changes in state
+
+>  o  This minimises the volume of serial communication
+
+>  o  As well as the amount of work the computer has to do
+
+~
+IPHONOGRAPH CASE STUDY
+
+  o  The iPhonograph is an "apparently" vintage music player
+
+  o  It has three "cylinders”, with 7 music tracks on each
+
+  o  Various switches, sliders & buttons allow selection and playback of music
+
+  o  A light indicates the current playback state (playing or stopped)
+
+  o  Hidden inside the wood and brass exterior is an Arduino and Raspberry Pi
+
+  o  Software is written in Python and the Arduino "Wiring" language
+
+  o  Communication is via USB serial
+  
+~
+IPHONOGRAPH COMMUNICATION PROTOCOL
+
+  o  The slider selects the track by sending a digit from 1 to 7 to the Pi
+
+  o  The three-way switch selects which "cylinder" to play from:
+
+		Left (L)  Middle (M)  Right (R)
+
+  o  A button inside the bellows is used to increase volume (B)
+
+  o  If a "1" is sent to the Arduino, the lamp is switched on
+
+  o  If a "0" is sent, the lamp is switched off
+
+~
+IPHONOGRAPH PYTHON CODE
+
+&	import time, serial
+&	track = "None"
+&	cyl = "None"
+&	countdown = 0
+&	ser = serial.Serial("/dev/cu.usbserial-A4001L1w",9600,timeout=2) 
+&	while (track != "1"):
+&	    command = ser.read()
+&	    if (command != "") and (command != "\n"):
+&	        ser.read()
+&	        if(command == "B"): print("Increase Volume !!!")
+&		else:
+&	            if(command == "L"): cyl = "LEFT"
+&	            elif(command == "M"): cyl = "MIDDLE"
+&	            elif(command == "R"): cyl = "RIGHT"
+&	            else: track = command
+&		    print("Playing track " + track + " on " + cyl + " cylinder")
+&	            ser.write("1")
+&	            countdown = 5;
+&	    if(countdown <= 0): ser.write("0")
+&	    else: countdown-=1
+&	ser.write("0")
+~
+ARDUINO CODE
+
+    The Arduino side of things isn't really part of this module
+
+    If you're interested in what this code looks like, take a look here:
+
+%	res/iPhonograph.txt
+
+    Could be useful in you projects !
+
+~
+HTTP
+
+  o  HTTP is not that dissimilar to the simple protocol we have just invented
+
+  o  The command set is maybe more complicated and more data is being shifted
+
+  o  But it's just another protocol
+
+  o  To help us use it, Python provides us with a simplified API
+
+  o  This prevents us from having to deal with the low-level complexity
+
+~
+URLLIB
+
+  o  Confusingly, there are two HTTP libraries <B>urllib</B> and <B>urllib2</B>
+
+  o  These aren't just different versions - they do different things !
+
+  o  Chances are that you are going to need both of them
+
+  o  There is another very good library called <B>Requests</B>
+
+>  o  But using that would make everything far too easy ;o)
+
+~
+URLLIB GET EXAMPLE
+
+    Import the required libraries
+&	import urllib2
+&
+    Open the desired URL
+&	response = urllib2.urlopen("http://store.apple.com/uk/mac")
+
+    Read the response returned by the server
+&	html = response.read()
+
+    Print out the first 350 characters
+&	print(html[:350])
+
+~
+URLLIB POST EXAMPLE
+
+    Import the required libraries
+&	import urllib2, urllib
+&
+    Encode the POST data
+&	data = urllib.urlencode({ "q" : "fluffy kitten" })
+
+    Open the URL, passing in the post data
+&	searchurl = "http://www.flickr.com/search/"
+&	response = urllib2.urlopen(searchurl, data)
+
+    Read the response returned by the server
+&	html = response.read()
+
+    Print out a chunk
+&	print(html[30000:30500])
+
+~
+A MORE USEFUL POST EXAMPLE
+
+    Initial code as before, flickr search for "fluffy kitten"
+&	import urllib2, urllib
+&	data = urllib.urlencode({ "q" : "fluffy kitten" })
+&	searchurl = "http://www.flickr.com/search/"
+&	response = urllib2.urlopen(searchurl, data)
+&	html = response.read()
+
+    Get the index of the first image SRC attribute
+&	start = html.find("data-defer-src") + 16
+
+    Get the index of the double quote at the end of the image URL
+&	end = html.find("\"",start)
+
+    Print out the image URL
+&	print(html[start:end])
+
+    Open up the image
+&	subprocess.Popen(["open",html[start:end]])
+
+~
+<R>THOUGHT EXERCISE</R>
+
+    What else could you do with this HTTP POST functionality ?
+<?>
+>	Grab photo from webcam and "Search by image" on a web search engine
+
+>	Upload images onto flickr
+
+>	Upload videos onto Vimeo or YouTube
+
+>	Integration with auction sites (e.g. Ebay)
+
+>	Integration with online web-form systems
+
+>	Denial of Service attacks on e-commerce sites
+</?>
+
+~
+REALLY SMALL MESSAGE BROKER
+
+  o  The Really Small Message Broker (RSMB) is a server that supports real time
+     communication between distributed peers
+
+  o  Communication takes the form of messages multicast to interested parties
+
+  o  You can register interest in a particular <B>topic</B>
+
+  o  Any messages regarding that topic are forwarded to you
+
+  o  You can publish messages on a topic, which are then forwarded to others
+
+  o  Communication with broker is achieved using MQ Telemetry Transport (MQTT)
+
+~
+IBM
+
+  o  RSMB is developed by IBM and is available on many platforms (except Pi)
+
+  o  It is part of the infrastructure provided in IBM Smarter Planet Lab
+
+  o  There is also an open-source implementation of RSMB called Mosquitto
+
+  o  This will run quite happily on the Raspberry Pi :o)
+
+  o  Although you probably won't need to as IBM RSMB runs on the lab machines
+
+  o  Just run the "run-broker" script in a terminal:
+
+%			res/MQTT/run-broker.sh
+
+  o  We can leave this running in the background and it will log all activity
+
+~
+WMQTT UTILITY
+
+  o  To help with debugging, there is a useful utility called WMQTT:
+
+%			res/MQTT/run-utility.jar
+
+  o  This allows us to:
+
+	- Connect to the broker
+
+	- Subscribe to particular topics
+
+	- Publish messages on a topic
+
+  o  Let's connect to the broker and subscribe for the "simon/random" topic
+     (we are going to need it for the next example !)
+
+  o  Check the log messages from the broker when connecting and subscribing
+
+~
+PYTHON MQTT CLIENT
+
+  o  There is a Python MQTT client for communicating with the broker
+
+  o  If you have pip, you can install MQTT with:
+
+	pip install mosquitto
+
+  o  Otherwise, you can manually get the library from:
+
+%		http://mosquitto.org/download/
+
+  o  If you only need the Python client (i.e. not the broker itself)
+     the easiest way to install it is to download the source archive
+     unzip it and then to run setup.py in lib/python:
+
+		python setup.py install --user
+
+~
+PYTHON PUBLISH
+
+    Import the required libraries
+&	import mosquitto, random
+&
+    Create a client wrapper
+&	client = mosquitto.Mosquitto("DAT205")
+
+    Connect to the broker (in this case the local one)
+&	client.connect("127.0.0.1")
+
+    Generate a random floating point number
+&	number = random.random()
+
+    Print out the random number
+&	print("About to send " + str(number))
+
+    Publish the random number to the "simon/random" topic
+&	client.publish("simon/random", str(number))
+
+~
+PYTHON SUBSCRIBE
+
+    Begin as before
+&	import mosquitto
+&	client = mosquitto.Mosquitto("DAT205")
+&	client.connect("127.0.0.1")
+
+    Subscribe to the "simon/test" topic
+&	client.subscribe("simon/test")
+
+    Write a method to handle the incoming message
+&	def messageReceived(broker, obj, msg):
+&	    global client
+&	    print("Message " + msg.topic + " containing: " + msg.payload)
+
+    Set the client to "None" so that we quit and return to the slides !
+&	    client = None
+
+    Register the incoming message handler
+&	client.on_message = messageReceived
+
+    While the client still exists, ask it to process incoming messages
+&	while (client != None): client.loop()
+~
+THIS WEEK'S PRACTICAL
+
+    This week we are going to build a distributed, synchronised LED lightshow !
+    First write some Arduino code that switches on and off the LED on pin 13.
+    Then invent a simple protocol to control the LED from Python.
+
+    Write some Python that connects to the RSMB broker.
+    This code should subscribe to the "lights" topic and control the LED:
+
+      o  When the payload of an incoming message is "ON" switch the LED on
+      o  When the payload of an incoming message is "OFF" switch the LED off
+
+    If everything works correctly, we should be able to control all the
+    LEDs in the room by publishing messages to the broker !
+
+    It is important to do each week's practical work during that week.
+    Remember - they will form part of your assessed portfolio
+

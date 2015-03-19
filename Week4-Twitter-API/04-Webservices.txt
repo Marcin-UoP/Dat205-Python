@@ -1,0 +1,458 @@
+
+
+
+
+
+
+				DAT205 - PYTHON
+			        WEBSERVICE APIs
+
+				      by
+
+				 Dr Simon Lock
+
+~
+INTRODUCTION
+
+  o  Today we will be looking at webservice APIs
+
+  o  That is, services that we can call over the web via HTTP
+
+  o  Sometimes called <U>RESTful</U> services (REpresentational State Transfer)
+
+  o  These are invoked using raw GET and POST requests
+
+  o  Much easier to use highlevel, language specific <U>wrappers</U> built upon these
+
+  o  In particular, we will look at <U>Twitter</U> and <U>Xively</U> APIs
+
+~
+INSTALLING PYTHON TWITTER WRAPPER
+
+  o  To make use of Twitter, you will need to install the wrapper module
+
+  o  This should already be installed on the DAT Raspberry Pi image
+
+  o  If you are on another platform and have pip, you can install with:
+
+	pip install python-twitter
+
+  o  You might optionally have to install oauth as well
+
+  o  To install on a lab machine, download a zip of the google code repo:
+
+%	https://code.google.com/p/python-twitter/downloads/list
+
+  o  Unzip, CD into the folder and run:
+
+	python setup.py install --user
+
+~
+CREATING TWITTER AUTHENTICATION KEYS
+
+  o  In order to use the Twitter API, you will need to register as a developer
+
+  o  Then create an app in order to generate authentication keys and secrets:
+
+%	https://dev.twitter.com/apps
+
+  o  I've put my keys and secrets into a file called <U>TwitterCredentials.txt</U>
+
+  o  Comma separated file containing 4 keys and secrets required by Twitter:
+
+	- Consumer Key
+	- Consumer Secret
+	- Access Token Key
+	- Access Token Secret
+
+  o  This keeps code tidy (they are long) and stops people seeing my secrets !
+
+~
+TWITTER READ STATUS
+
+    First import the required modules
+&	import twitter, datetime
+&
+    Hardcode a user ID into a variable (Stephen Fry)
+&	user = 15439395
+
+    Load in my keys and secrets from the credentials file into a list (array)
+&	file = open("res/TwitterCredentials.txt")
+&	cred = file.readline().strip().split(',')
+
+    Create a new API wrapper, passing in my credentials one at a time
+&	api = twitter.Api(consumer_key=cred[0],consumer_secret=cred[1],
+&			  access_token_key=cred[2],access_token_secret=cred[3])
+
+    Get the most recent batch of status updates for the user
+&	statuses = api.GetUserTimeline(user)
+
+    Just print out the most recent one
+&	print (statuses[0].text)
+
+~
+TWITTER STATUS UPDATE
+
+    Import required modules
+&	import twitter, datetime
+&
+    Load in my keys and secrets from the credentials file into a list (array)
+&	file = open("res/TwitterCredentials.txt")
+&	cred = file.readline().strip().split(',')
+
+    Create a new API wrapper, passing in my credentials one at a time
+&	api = twitter.Api(consumer_key=cred[0],consumer_secret=cred[1],
+&			  access_token_key=cred[2],access_token_secret=cred[3])
+
+    Find out what time it is now (in Coordinated Universal Time)
+&	timestamp = datetime.datetime.utcnow()
+
+    Post status update and get the response from Twitter
+&	response = api.PostUpdate("Tweeted at " + str(timestamp))
+
+    Print out response text (should be the status update if everything worked)
+&	print("Status updated to: " + response.text)
+
+~
+TWITTER STATUS UPDATE - CHECK
+
+    We can check to make sure that the status update really worked by going
+    to my Twitter page:
+
+%	https://twitter.com/5IM0NL0CK
+
+    Should have the new tweet at the top of my timeline
+
+~
+TWEETING
+
+    <R>[Q&A]</R> What kinds of data might you be able to auto tweet in this way ?
+
+~
+XIVELY
+
+  o  Xively is an internet-of-things realtime data sharing platform
+
+  o  You can upload data onto it, or pull data down from it
+
+  o  Was originally called Pachbe, then Cosm, but no one could pronounce these
+
+  o  Xively is clearly better ;o)
+
+  o  The classic use of Xively is for publishing realtime weather station data
+
+  o  But there is lots of potential for other, more interesting uses
+
+~
+INSTALLING PYTHON XIVELY WRAPPER
+
+  o  To make use of Xively, you will need to install the wrapper module
+
+  o  This should already be installed on the DAT Raspberry Pi image
+
+  o  If you are on another platform and have pip, you can install with:
+
+	pip install xively-python
+
+  o  You might optionally have to install oauth as well
+
+  o  To install on a lab machine, download a zip of the github repo:
+
+%	https://github.com/xively/xively-python
+
+  o  Unzip, CD into the folder and run:
+
+	python setup.py install --user
+
+~
+CREATING XIVELY AUTHENTICATION KEYS
+
+  o  In order to use the Xively API, you will need to register as a developer
+
+  o  Then create an app in order to generate an authentication key:
+
+%	https://xively.com/
+
+  o  Login and go to "Master Keys" on the "Settings" page
+
+  o  Again, I have put my key into a file called <U>XivelyCredentials.txt</U>
+
+~
+FEEDS, STREAMS AND POINTS
+
+  o  A <U>feed</U> is a top-level concept, relating to a location, device or developer
+
+  o  A feed is composed of a number of data <U>streams</U>
+
+  o  A data stream represents a certain type of reading (e.g. heat, light etc)
+
+  o  A stream consists of a number of data <U>points</U>
+
+  o  Data points are readings (int or floats) and associated timestamps
+
+  o  Easy !
+
+>  o  <R>[Q&A]</R> Give an example of a feed, stream and datapoint for this session ?
+
+~
+MY XIVELY FEED
+
+    I have set up a Xively feed containing various data streams
+
+    Let's take a quick look, making sure to note the current value of <U>Alpha</U>
+
+%	https://xively.com/feeds/79844
+
+~
+XIVELY UPLOAD
+
+&	import xively, datetime, random
+&	file = open("res/XivelyCredentials.txt")
+&	key = file.readline().strip()
+&	api = xively.XivelyAPIClient(key)
+
+    Get hold of the desired feed using its ID
+&	feed = api.feeds.get(79844)
+
+    Create a random value
+&	num = random.randint(1,10)
+
+    Generate a timestamp for the current time
+&	stamp = datetime.datetime.utcnow()
+
+    Create a datastream with the right ID and set current value and timestamp
+&	stream = xively.Datastream(id="alpha", current_value=num, at=stamp)
+&	print("Setting Alpha to " + str(num))
+
+    Insert stream into local copy of feed, then call update to sync with server
+&	feed.datastreams = [stream]
+&	feed.update()
+~
+CHECK FEED UPDATE
+
+    Let's check the previous code worked by taking a look at my Xively page:
+
+%	https://xively.com/feeds/79844
+
+    <U>Alpha</U> should have been updated with a random value between 1 and 10
+
+~
+GETTING XIVELY DATA
+
+  o  Easiest way to retrieve the most recent value from a stream is HTTP GET
+
+  o  This doesn't make use of the Python Xively API wrapper at all !
+
+  o  Instead it uses the more general <U>urllib2</U> HTTP library
+
+  o  We covered this in detail previously, here we see it in action again
+
+~
+XIVELY HTTP GET QUERY
+
+    Import the HTTP library
+&	import urllib2
+&
+    Load the key as normal
+&	file = open("res/XivelyCredentials.txt")
+&	key = file.readline().strip()
+
+    Construct a URL, including the feed ID, stream name and the key
+&	base = "http://api.xively.com/v2/feeds/"
+&	feed = "79844"
+&	stream = "alpha"
+&	url = base + feed + ".csv?datastreams=" + stream + "&key=" + key
+
+    Request the constructed URL
+&	response = urllib2.urlopen(url)
+
+    Pull out the actual reading from response (ignoring things like timestamp)
+&	current_value = response.read().split(',')[2]
+&	print("Latest value: " + current_value)
+
+~
+XIVELY HISTORICAL DATAPOINTS
+
+    Import the Xively library
+&	import xively
+&
+    Load the key and create the API wrapper as normal
+&	file = open("res/XivelyCredentials.txt")
+&	key = file.readline().strip()
+&	api = xively.XivelyAPIClient(key)
+
+    Get feed 61916 and then select the stream called "random900" from it
+&	feed = api.feeds.get(61916)
+&	stream = feed.datastreams.get("random900")
+
+    Ask for the last 2 hours of data
+&	response = stream.datapoints.history(duration="2hours")
+
+    Convert the response into a list (array) and print it out
+&	points = list(response)
+&	print(points)
+
+~
+HISTORICAL DATA PARAMETERS
+
+    The call to the <U>history</U> function may have a number of optional parameters:
+
+
+	<B>start</B>		The start date of datapoints (use datetime.datetime)
+
+	<B>end</B>		The end date of datapoints (use datetime.datetime)
+
+	<B>duration</B>	The duration of the datapoints
+			(seconds, minutes, hours, days, weeks, months)
+
+	<B>find_previous</B>	Include datapoint immediately before the start as well
+
+	<B>limit</B>		Limit the number of datapoints returned
+
+	<B>interval</B>	Interval between readings in seconds
+
+~
+CUSTOM HISTORY CALL
+
+&	import xively, datetime
+&	file = open("res/XivelyCredentials.txt")
+&	key = file.readline().strip()
+&	api = xively.XivelyAPIClient(key)
+
+    Get feed 61916 and then select the stream called "random900" from it
+&	feed = api.feeds.get(61916)
+&	stream = feed.datastreams.get("random900")
+
+    Set the start and end points (30th Dec 2012 to 10th Jan 2013)
+&	s = datetime.datetime(2012,12,30,23,59,59)
+&	e = datetime.datetime(2013,1,10,23,59,59)
+
+    Request history from start to end with an interval of one reading per day
+&	response = stream.datapoints.history(start=s, end=e, interval=86400)
+
+    Convert the response into a list (array) and print it out
+&	points = list(response)
+&	print(points)
+
+~
+XIVELY GRAPHS
+
+  o  As well as raw data, we can also get Xively to generate graphs:
+
+  o  The base URL is:
+
+	https://api.xively.com/v2/feeds/
+
+  o  To which we add the feed ID and stream name to get something like:
+
+%	https://api.xively.com/v2/feeds/61916/datastreams/random900.png
+
+  o  Problem is that this isn't always very pretty...
+
+~
+CUSTOM GRAPHS
+
+    There are also a bunch of optional parameter to customise the graph:
+
+	<B>w</B> 	  width of image (max area 300,000 pixels)
+	<B>h</B> 	  height of image (max area 300,000 pixels)
+	<B>c</B> 	  colour in hex (000000 to FFFFFF)
+	<B>t</B> 	  title label at top of graph (in double quotes)
+	<B>l</B> 	  legend label underneath graph (in double quotes)
+	<B>s</B> 	  stroke size in pixels
+	<B>duration</B>  length of time in minutes or hours or days or months
+	<B>g</B> 	  grid (true or false)
+	<B>b</B> 	  axis labels (true or false)
+	<B>scale</B> 	  scaling method (auto or manual)
+	<B>min</B> 	  value for manual scale
+	<B>max</B> 	  value for manual scale
+
+    For example, take a look at this custom graph (sorry about the ugly URL):
+
+%	https://api.xively.com/v2/feeds/61916/datastreams/random900.png?w=800&h=300&c=FF0000&t="Custom Generated Graph"&l="Random data"&s=2&duration=10hours&g=true&b=true&scale=manual&min=-1&max=2&
+~
+<R>EXERCISE</R>
+
+    Let's do a quick exercise - just to please Chris (wherever he is)...
+
+    On paper (or on your laptop) plan out how you would write an app that:
+
+	-  Checks the UKFootieScores twitter page:
+
+%		https://twitter.com/UKFootieScores
+
+	-  Identifies matches involving Argyle
+
+	-  Logs Plymouth's goal tally on Xively
+
+	-  You'll need to ensure you timestamp the scores with the correct date
+
+~
+ARGIVELY
+<?>
+&	import twitter, xively, datetime
+&	user = 210228906
+&	file = open("res/TwitterCredentials.txt")
+&	cred = file.readline().strip().split(',')
+&	twit = twitter.Api(consumer_key=cred[0],consumer_secret=cred[1],
+&			  access_token_key=cred[2],access_token_secret=cred[3])
+&	file = open("res/XivelyCredentials.txt")
+&	key = file.readline().strip()
+&	xive = xively.XivelyAPIClient(key)
+&	feed = xive.feeds.get(79844)
+&	statuses = twit.GetUserTimeline(user,count=200)
+&	for status in statuses:
+&	    index = status.text.find("Plymouth")
+&	    if(index != -1): goals = status.text[index+9:index+10]
+&	print("Publishing " + str(goals))
+&	stamp = datetime.datetime.utcnow()
+&	stream = xively.Datastream(id="alpha", current_value=goals, at=stamp)
+&	feed.datastreams = [stream]
+&	feed.update()
+</?>
+~
+CHECK FEED UPDATE
+
+    Let's check the previous code worked by generating a graph for Alpha:
+
+%    https://api.xively.com/v2/feeds/79844/datastreams/alpha.png?duration=1hour
+
+
+~
+OTHER WEB SERVICES
+
+  o  Twitter and Xively are just two of a huge variety of web services
+
+  o  They are useful to DAT students, so we cover them here
+
+  o  Check out the programmable web search site for other services:
+
+%	http://www.programmableweb.com/category/all/apis
+
+  o  Often there is a Python API wrapper available to make things easy
+
+  o  When there isn't, you can always use HTTP GET or POST with urllib2
+
+~
+THIS WEEK'S PRACTICAL
+
+    In this week's practical you must create an auto-tweet agent.
+
+    Your program should identify the last page viewed by your browser
+    (by looking in the "Current Session" or "History" file)
+
+    It should then acquire the title of the page last viewed.
+    For example, the title of the Ebay main page is:
+	Electronics, Cars, Fashion, Collectibles, Coupons and More | eBay
+
+    Your program should then tweet the fact that you liked the page:
+	I'm really liking Electronics, Cars, Fashion, Collectibles...
+
+    Include a loop so that it tweets about the most recent page every hour
+
+
+
+    It is important to do each week's practical work during that week.
+
+    Remember - they will form part of your assessed portfolio
+
