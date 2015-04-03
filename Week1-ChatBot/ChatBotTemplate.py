@@ -1,5 +1,5 @@
 # loads and reads all words from txt file
-file = open("stopwords.txt") 
+file = open("stop-words.txt") 
 stopwords = file.readlines()
 stopwords = []
 
