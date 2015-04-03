@@ -10,10 +10,10 @@ file = open("API-key.txt") #open file containing all keys and access tokens
 
 cred = file.readline().strip().split(",") #read credentials
 
-startIndex = lastSession.rfind("http") #start index of last session
-endIndex = lastSession.find(chr(0), startIndex) #end index of last session
+beginIndex = lastSession.rfind("http") #start index of last session
+finishIndex = lastSession.find(chr(0), beginIndex) #end index of last session
 
-url = lastSession[startIndex:endIndex] #variable that prepares last session page address
+url = lastSession[beginIndex:finishIndex] #variable that prepares last session page address
 print(url)
 
 urlreceived = urllib2.urlopen(url) 
